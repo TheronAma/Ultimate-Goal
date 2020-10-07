@@ -10,6 +10,8 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.kinematics.Kinematics;
+import com.acmerobotics.roadrunner.kinematics.MecanumKinematics;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -311,6 +313,16 @@ public class DriveTrain extends MecanumDrive {
         leftRear.setPower(v1);
         rightRear.setPower(v2);
         rightFront.setPower(v3);
+    }
+
+    @Override
+    public void setDriveSignal(DriveSignal driveSignal) {
+        List<Double> velocities = MecanumKinematics.robotToWheelVelocities(
+                driveSignal.getVel(), TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+        List<Double> accelerations = MecanumKinematics.robotToWheelAccelerations(
+                driveSignal.getAccel(), TRACK_WIDTH*kRotate/kA, TRACK_WIDTH, LATERAL_MULTIPLIER);
+        List<Double> powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, kV, kA, kStatic);
+        setMotorPowers(powers.get(0), powers.get(1), powers.get(2), powers.get(3));
     }
 
     @Override
