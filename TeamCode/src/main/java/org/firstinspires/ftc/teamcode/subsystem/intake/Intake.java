@@ -10,7 +10,6 @@ public class Intake {
     public Intake(HardwareMap map){
         frontIntake = map.get(DcMotorEx.class, "frontIntake");
         backIntake = map.get(DcMotorEx.class, "backIntake");
-
     }
 
     public void setPower(double power){

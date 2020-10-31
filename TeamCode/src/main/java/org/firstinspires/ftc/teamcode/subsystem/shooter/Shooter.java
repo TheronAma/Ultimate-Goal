@@ -23,7 +23,7 @@ public class Shooter {
 
         double targetRpm = 0;
 
-        public static double TICKS_PER_REV = 7;
+        public static double TICKS_PER_REV = 28;
 
         public static double kV = 0.01;
         PIDCoefficients velocityPID = new PIDCoefficients(1,0,0);
@@ -71,12 +71,16 @@ public class Shooter {
                 currentPosition = flywheel.getCurrentPosition() - offset;
                 currentTime = System.nanoTime() * Math.pow(10,9);
 
-                velocity = (currentPosition-lastPosition)/(currentTime-lastTime);
+                velocity = ((currentPosition-lastPosition)/28*60)/(currentTime-lastTime);
 
                 double power = velocityController.update(velocity);
                 flywheel.setPower(power);
 
                 lastPosition = currentPosition;
                 lastTime = currentTime;
+        }
+
+        public double getVelocity(){
+                return velocity;
         }
 }

@@ -18,9 +18,7 @@ public class FlywheelLUT {
                 return dataPoints.get(i).get(0) + (distance - dataPoints.get(i).get(1)) / slope;
             }
         }
-
         return dataPoints.get(29).get(1);
-
     }
 
 }

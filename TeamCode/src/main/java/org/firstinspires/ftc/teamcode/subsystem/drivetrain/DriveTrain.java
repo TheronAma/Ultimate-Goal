@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystem.drivetrain;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
@@ -39,6 +40,7 @@ A lot of this code is adapted from
 the roadrunner quickstart, with some modifications
  */
 
+@Config
 public class DriveTrain extends MecanumDrive {
 
     /*
@@ -47,19 +49,19 @@ public class DriveTrain extends MecanumDrive {
         to follow trajectories, and for feedforward control.
      */
 
-    public static final double TICKS_PER_REV = 537.6;
-    public static final double MAX_RPM = 312;
+    public static final double TICKS_PER_REV = 383.6;
+    public static final double MAX_RPM = 435;
 
     public static final boolean RUN_USING_ENCODER = true;
 
-    public static final double WHEEL_RADIUS = 2;
+    public static final double WHEEL_RADIUS = 50/25.4;
     public static final double GEAR_RATIO = 1;
-    public static final double MAX_VELOCITY = 312 * GEAR_RATIO * WHEEL_RADIUS * 2 * Math.PI / 60.0;
+    public static final double MAX_VELOCITY = MAX_RPM * GEAR_RATIO * WHEEL_RADIUS * 2 * Math.PI / 60.0;
     public static double TRACK_WIDTH = 15;
 
-    public static double kV = 1.0 / (MAX_VELOCITY); //ratio between motor power and velocity
+    public static double kV = 0.02; //ratio between motor power and velocity
     public static double kRotate = 0; //ratio between motor power and rotational acceleration
-    public static double kA = 0; //ratio of motor power to acceleration
+    public static double kA = 0.001; //ratio of motor power to acceleration
     public static double kStatic = 0;//amount of power required to overcome static friction
     public static double LATERAL_MULTIPLIER = 1;//ratio of power required to make horizontal movements
 
@@ -252,6 +254,10 @@ public class DriveTrain extends MecanumDrive {
                         ),
                         new Pose2d()
                 ));
+                break;
+            }
+            case TELE_OP:{
+
             }
         }
     }
