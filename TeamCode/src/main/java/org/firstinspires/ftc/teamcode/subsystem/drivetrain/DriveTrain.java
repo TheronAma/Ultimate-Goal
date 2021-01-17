@@ -12,6 +12,8 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.kinematics.Kinematics;
+import com.acmerobotics.roadrunner.kinematics.MecanumKinematics;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -24,10 +26,12 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
@@ -40,6 +44,8 @@ import java.util.List;
 import static org.firstinspires.ftc.teamcode.subsystem.drivetrain.DriveConstants.BASE_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.subsystem.drivetrain.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.subsystem.drivetrain.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.subsystem.drivetrain.DriveConstants.START_KA;
+import static org.firstinspires.ftc.teamcode.subsystem.drivetrain.DriveConstants.START_KV;
 import static org.firstinspires.ftc.teamcode.subsystem.drivetrain.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystem.drivetrain.DriveConstants.encoderTicksToInches;
 import static org.firstinspires.ftc.teamcode.subsystem.drivetrain.DriveConstants.kA;
@@ -48,8 +54,13 @@ import static org.firstinspires.ftc.teamcode.subsystem.drivetrain.DriveConstants
 
 @Config
 public class DriveTrain extends MecanumDrive {
+
+    private ElapsedTime timer;
+    double dt = 0;
+    double lastTime = 0;
+
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -90,6 +101,16 @@ public class DriveTrain extends MecanumDrive {
     public DriveTrain(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
+        timer = new ElapsedTime();
+        lastTime = timer.milliseconds();
+
+        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+        if(!RUN_USING_ENCODER) {
+            DriveConstants.kV = START_KV * 12 / batteryVoltageSensor.getVoltage();
+            DriveConstants.kA = START_KA * 12 / batteryVoltageSensor.getVoltage();
+            //DriveConstants.kStatic *= 12/batteryVoltageSensor.getVoltage();
+        }
+
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(10);
 
@@ -108,7 +129,7 @@ public class DriveTrain extends MecanumDrive {
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
 
-        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
+
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
@@ -119,10 +140,10 @@ public class DriveTrain extends MecanumDrive {
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        leftFront = hardwareMap.get(DcMotorEx.class, "fl");
+        leftRear = hardwareMap.get(DcMotorEx.class, "bl");
+        rightRear = hardwareMap.get(DcMotorEx.class, "br");
+        rightFront = hardwareMap.get(DcMotorEx.class, "fr");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -140,7 +161,9 @@ public class DriveTrain extends MecanumDrive {
 
         // TODO: reverse any motors using DcMotor.setDirection()
 
-        setLocalizer(new Localizer(hardwareMap));
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        //setLocalizer(new Localizer(hardwareMap));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -202,6 +225,8 @@ public class DriveTrain extends MecanumDrive {
     public void update() {
         updatePoseEstimate();
 
+
+
         Pose2d currentPose = getPoseEstimate();
         Pose2d lastError = getLastError();
 
@@ -211,10 +236,20 @@ public class DriveTrain extends MecanumDrive {
             poseHistory.removeFirst();
         }
 
+        dt = timer.milliseconds() - lastTime;
+        lastTime = timer.milliseconds();
+        if(dt > 100){
+            dt = 0;
+        }
+
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay();
 
+
+
         packet.put("mode", mode);
+
+        packet.put("dt",dt);
 
         packet.put("x", currentPose.getX());
         packet.put("y", currentPose.getY());
@@ -369,4 +404,15 @@ public class DriveTrain extends MecanumDrive {
     public double getRawExternalHeading() {
         return imu.getAngularOrientation().firstAngle;
     }
+
+    @Override
+    public void setDriveSignal(DriveSignal driveSignal) {
+        List<Double> velocities = MecanumKinematics.robotToWheelVelocities(
+                driveSignal.getVel(), TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+        List<Double> accelerations = MecanumKinematics.robotToWheelAccelerations(
+                driveSignal.getAccel(), TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+        List<Double> powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, kV, kA, kStatic);
+        setMotorPowers(powers.get(0), powers.get(1), powers.get(2), powers.get(3));
+    }
+
 }
