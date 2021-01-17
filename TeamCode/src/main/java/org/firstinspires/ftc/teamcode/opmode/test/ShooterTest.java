@@ -11,17 +11,15 @@ import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
  */
 @Config
 public class ShooterTest extends OpModeBase {
-    public static double TARGET_RPM = 100;
+    public static double TARGET_RPM = 4000;
     public void runOpMode(){
-
         Shooter shooter = new Shooter(hardwareMap);
-
         waitForStart();
-
-        shooter.setVelocity(TARGET_RPM);
         while(opModeIsActive()){
-            shooter.update();
-            telemetry.addData("Rpm",shooter.getVelocity());
+            shooter.setRpm(TARGET_RPM);
+            telemetry.addData("Rpm",shooter.getRpm());
+            telemetry.update();
+            shooter.sendDashTelemetry();
         }
     }
 }
