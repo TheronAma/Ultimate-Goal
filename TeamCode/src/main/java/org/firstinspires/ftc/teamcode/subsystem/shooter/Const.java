@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystem.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 public class Const {
+
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(40, 0, 0, 13);
 
     public static double SHOOTER_MAX_RPM = 5400;
     public static double SHOOTER_REGULAR_RPM = 4800;

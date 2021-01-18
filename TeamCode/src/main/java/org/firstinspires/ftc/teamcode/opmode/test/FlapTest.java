@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Barrel;
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 
 @Config
+@TeleOp()
 public class FlapTest extends LinearOpMode {
     public static double FLAP_POSITION = 0.5;
 

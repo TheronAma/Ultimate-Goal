@@ -9,11 +9,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Shooter {
         private DcMotorEx flywheel;
         private Servo flap;
+
+        private double lastPos;
+        private double currentPos;
+        private double lastTime;
+        private ElapsedTime timer;
 
         private double targetVelocity;
 
@@ -23,10 +30,22 @@ public class Shooter {
                 flywheel = hwMap.get(DcMotorEx.class,"flywheel");
                 flap = hwMap.get(Servo.class,"flap");
 
-                flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
+                lastPos = flywheel.getCurrentPosition();
+                timer = new ElapsedTime();
+/*
+                flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,
+                        new PIDFCoefficients(
+                                Const.MOTOR_VELO_PID.p,
+                                Const.MOTOR_VELO_PID.i,
+                                Const.MOTOR_VELO_PID.d,
+                                Const.MOTOR_VELO_PID.f));
+
+ */
 
                 dashboard = FtcDashboard.getInstance();
                 dashboard.setTelemetryTransmissionInterval(10);
+                lastTime = timer.milliseconds();
+
         }
 
         public void setPower(double power){
@@ -70,11 +89,12 @@ public class Shooter {
 
         public void sendDashTelemetry() {
                 TelemetryPacket packet = new TelemetryPacket();
-                packet.put("velocity", getVelocity());
-                packet.put("target", targetVelocity);
-                packet.put("rpm",getRpm());
-                packet.put("target_rpm",targetVelocity * 60. / 28.);
+                currentPos = flywheel.getCurrentPosition();
+                packet.put("Motor Velocity from method",flywheel.getVelocity());
                 dashboard.sendTelemetryPacket(packet);
+
+                lastPos = currentPos;
+                lastTime = timer.seconds();
         }
 
 

@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Barrel;
 
 @Config
+@TeleOp()
 public class BarrelTest extends LinearOpMode {
 
     public static double ARM_POSITION = 0.5;
