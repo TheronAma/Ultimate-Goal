@@ -32,6 +32,6 @@ public class Barrel {
         arm.setPosition(position);
     }
 
-    public void setPusherPosition(double position){ arm.setPosition(position); }
+    public void setPusherPosition(double position){ pusher.setPosition(position); }
 
 }

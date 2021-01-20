@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystem.shooter.Const;
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 
 @Config
+@Autonomous
 public class TestAuto extends LinearOpMode {
     public static Pose2d START_POSE = new Pose2d(24,-62,Math.PI/4);
     public static Vector2d SHOOT_POS = new Vector2d(14,-40);

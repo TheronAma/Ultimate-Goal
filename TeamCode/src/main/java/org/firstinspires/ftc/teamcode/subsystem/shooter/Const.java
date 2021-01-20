@@ -13,16 +13,16 @@ public class Const {
     public static int TICKS_PER_REV = 28;
     public static double SHOOTER_HEADING_OFFSET = 0;
 
-    public static double FLAP_MIN_POS = 0.4;
-    public static double FLAP_MAX_POS = 0.6;
+    public static double FLAP_MIN_POS = 0.45;
+    public static double FLAP_MAX_POS = 0.65;
     public static double FLAP_AUTO_ANGLE = 20;
     public static double FLAP_RANGE = FLAP_MAX_POS - FLAP_MIN_POS;
 
-    public static double BARREL_TOP_POS = 0.5;
-    public static double BARREL_BOTTOM_POS = 0.5;
+    public static double BARREL_TOP_POS = 0.44;
+    public static double BARREL_BOTTOM_POS = 0.13;
 
-    public static double PUSHER_EXTEND_POS = 0.5;
-    public static double PUSHER_RETRACT_POS = 0.5;
+    public static double PUSHER_EXTEND_POS = 0.65;
+    public static double PUSHER_RETRACT_POS = 0.35;
 
     public static int PUSHER_MOVE_TIME = 200;
 
