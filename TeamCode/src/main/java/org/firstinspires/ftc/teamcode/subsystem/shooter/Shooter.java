@@ -32,6 +32,8 @@ public class Shooter {
 
                 lastPos = flywheel.getCurrentPosition();
                 timer = new ElapsedTime();
+
+                flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 /*
                 flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,
                         new PIDFCoefficients(
@@ -39,8 +41,8 @@ public class Shooter {
                                 Const.MOTOR_VELO_PID.i,
                                 Const.MOTOR_VELO_PID.d,
                                 Const.MOTOR_VELO_PID.f));
+*/
 
- */
 
                 dashboard = FtcDashboard.getInstance();
                 dashboard.setTelemetryTransmissionInterval(10);
@@ -89,12 +91,9 @@ public class Shooter {
 
         public void sendDashTelemetry() {
                 TelemetryPacket packet = new TelemetryPacket();
-                currentPos = flywheel.getCurrentPosition();
-                packet.put("Motor Velocity from method",flywheel.getVelocity());
+                packet.put("velocity",getVelocity());
+                packet.put("rpm",getRpm());
                 dashboard.sendTelemetryPacket(packet);
-
-                lastPos = currentPos;
-                lastTime = timer.seconds();
         }
 
 
