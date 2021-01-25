@@ -15,11 +15,14 @@ public abstract class OpModeBase extends LinearOpMode {
 
 
     public void waitTimeMillis(double t){
-        double start = sleepTimer.milliseconds();
-        double target = start + t;
-        while(sleepTimer.milliseconds() < target){
-
+        sleepTimer.reset();
+        while(sleepTimer.milliseconds() < t){
+            update();
         }
+    }
+
+    public void update() {
+
     }
 
 }

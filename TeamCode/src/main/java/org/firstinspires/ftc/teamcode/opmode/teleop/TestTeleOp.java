@@ -18,7 +18,7 @@ public class TestTeleOp extends LinearOpMode {
     private enum State {
         MAIN_DRIVER_CONTROL,
         SHOOTING,
-        LINE_UP
+        LINE_UP,
     }
 
     private State state;
@@ -27,8 +27,6 @@ public class TestTeleOp extends LinearOpMode {
     private Intake intake;
     private Barrel barrel;
     private Shooter shooter;
-
-
 
     private boolean a2WasPressed = false;
     private boolean b2WasPressed = false;
@@ -42,6 +40,8 @@ public class TestTeleOp extends LinearOpMode {
         intake = new Intake(hardwareMap);
         barrel = new Barrel(hardwareMap);
         shooter = new Shooter(hardwareMap);
+
+        shooter.setAngle(20);
 
         state = State.MAIN_DRIVER_CONTROL;
 
@@ -61,14 +61,14 @@ public class TestTeleOp extends LinearOpMode {
             if(gamepad2.a && !a2WasPressed){
                 a2WasPressed = true;
                 barrel.toggleArm();
-            } else {
+            } else if(!gamepad2.a){
                 a2WasPressed = false;
             }
 
             if(gamepad2.b && !b2WasPressed){
                 b2WasPressed = true;
                 barrel.togglePusher();
-            } else {
+            } else if(!gamepad2.b){
                 b2WasPressed = false;
             }
 
@@ -77,7 +77,7 @@ public class TestTeleOp extends LinearOpMode {
             if(!rbumber2Waspressed && gamepad2.right_bumper){
                 rbumber2Waspressed = true;
                 shooterRunning = !shooterRunning;
-            } else {
+            } else if(!gamepad2.right_bumper){
                 rbumber2Waspressed = false;
             }
 

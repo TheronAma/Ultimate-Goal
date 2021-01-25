@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 @Config
 public class Const {
 
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(40, 0, 0, 13);
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(25, 0, 0, 13.8);
 
     public static double SHOOTER_MAX_RPM = 5400;
-    public static double SHOOTER_REGULAR_RPM = 4800;
+    public static double SHOOTER_REGULAR_RPM = 4300;
     public static int TICKS_PER_REV = 28;
     public static double SHOOTER_HEADING_OFFSET = 0;
 
@@ -18,7 +18,7 @@ public class Const {
     public static double FLAP_AUTO_ANGLE = 20;
     public static double FLAP_RANGE = FLAP_MAX_POS - FLAP_MIN_POS;
 
-    public static double BARREL_TOP_POS = 0.44;
+    public static double BARREL_TOP_POS = 0.46;
     public static double BARREL_BOTTOM_POS = 0.13;
 
     public static double PUSHER_EXTEND_POS = 0.65;

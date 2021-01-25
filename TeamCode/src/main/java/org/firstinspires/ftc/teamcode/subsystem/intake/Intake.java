@@ -16,7 +16,7 @@ public class Intake {
         topRoller = map.get(DcMotorEx.class, "topRoller");
         bottomRoller = map.get(DcMotorEx.class, "bottomRoller");
 
-        topRoller.setDirection(DcMotorSimple.Direction.REVERSE);
+        //topRoller.setDirection(DcMotorSimple.Direction.REVERSE);
         bottomRoller.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 

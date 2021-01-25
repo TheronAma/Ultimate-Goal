@@ -34,20 +34,19 @@ public class Shooter {
                 timer = new ElapsedTime();
 
                 flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-/*
+
                 flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,
                         new PIDFCoefficients(
                                 Const.MOTOR_VELO_PID.p,
                                 Const.MOTOR_VELO_PID.i,
                                 Const.MOTOR_VELO_PID.d,
                                 Const.MOTOR_VELO_PID.f));
-*/
+
 
 
                 dashboard = FtcDashboard.getInstance();
                 dashboard.setTelemetryTransmissionInterval(10);
                 lastTime = timer.milliseconds();
-
         }
 
         public void setPower(double power){
@@ -95,6 +94,4 @@ public class Shooter {
                 packet.put("rpm",getRpm());
                 dashboard.sendTelemetryPacket(packet);
         }
-
-
 }

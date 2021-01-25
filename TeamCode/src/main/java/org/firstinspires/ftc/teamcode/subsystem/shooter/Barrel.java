@@ -18,8 +18,6 @@ public class Barrel {
 
         isRaised = false;
         isExtended = false;
-
-
     }
 
     public void raise(){ arm.setPosition(Const.BARREL_TOP_POS); isRaised = true; }

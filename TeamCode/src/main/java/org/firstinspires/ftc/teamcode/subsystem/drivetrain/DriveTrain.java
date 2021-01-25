@@ -59,8 +59,8 @@ public class DriveTrain extends MecanumDrive {
     double dt = 0;
     double lastTime = 0;
 
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(10, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
 
@@ -123,7 +123,7 @@ public class DriveTrain extends MecanumDrive {
 
         constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+                new Pose2d(0.2, 0.2, Math.toRadians(1.0)), 0.5);
 
         poseHistory = new LinkedList<>();
 
