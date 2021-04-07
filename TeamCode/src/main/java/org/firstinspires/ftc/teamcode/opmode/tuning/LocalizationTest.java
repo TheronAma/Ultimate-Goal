@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystem.drivetrain.DriveTrain;
  * exercise is to ascertain whether the localizer has been configured properly (note: the pure
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
+
 @Config
 @TeleOp(group = "drive")
 public class LocalizationTest extends LinearOpMode {
@@ -32,7 +33,7 @@ public class LocalizationTest extends LinearOpMode {
                             -gamepad1.left_stick_y,
                             -gamepad1.left_stick_x,
                             -gamepad1.right_stick_x
-                    )
+                    ),1
             );
 
             drive.update();
@@ -41,6 +42,7 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("Encoder Positions", drive.getWheelPositions());
             telemetry.update();
         }
     }

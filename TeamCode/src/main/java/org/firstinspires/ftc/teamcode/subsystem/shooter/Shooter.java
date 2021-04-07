@@ -11,9 +11,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Shooter {
+
         private DcMotorEx flywheel;
         private Servo flap;
 
@@ -26,12 +28,16 @@ public class Shooter {
 
         private FtcDashboard dashboard;
 
+        private VoltageSensor batteryVoltageSensor;
+
         public Shooter(HardwareMap hwMap){
                 flywheel = hwMap.get(DcMotorEx.class,"flywheel");
                 flap = hwMap.get(Servo.class,"flap");
 
                 lastPos = flywheel.getCurrentPosition();
                 timer = new ElapsedTime();
+
+                batteryVoltageSensor = hwMap.voltageSensor.iterator().next();
 
                 flywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -40,13 +46,13 @@ public class Shooter {
                                 Const.MOTOR_VELO_PID.p,
                                 Const.MOTOR_VELO_PID.i,
                                 Const.MOTOR_VELO_PID.d,
-                                Const.MOTOR_VELO_PID.f));
+                                Const.MOTOR_VELO_PID.f * 12.5 / batteryVoltageSensor.getVoltage()));
 
 
 
                 dashboard = FtcDashboard.getInstance();
                 dashboard.setTelemetryTransmissionInterval(10);
-                lastTime = timer.milliseconds();
+                timer.reset();
         }
 
         public void setPower(double power){
@@ -94,4 +100,18 @@ public class Shooter {
                 packet.put("rpm",getRpm());
                 dashboard.sendTelemetryPacket(packet);
         }
+
+        public void updatePIDCoeffs() {
+                if(timer.milliseconds() > 300){
+                        timer.reset();
+                        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,
+                                new PIDFCoefficients(
+                                        Const.MOTOR_VELO_PID.p,
+                                        Const.MOTOR_VELO_PID.i,
+                                        Const.MOTOR_VELO_PID.d,
+                                        Const.MOTOR_VELO_PID.f * 12.5 / batteryVoltageSensor.getVoltage()));
+                }
+        }
+
+
 }

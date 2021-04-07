@@ -20,11 +20,16 @@ public class Barrel {
         isExtended = false;
     }
 
-    public void raise(){ arm.setPosition(Const.BARREL_TOP_POS); isRaised = true; }
+    public void raise(){ arm.setPosition(Const.BARREL_TOP_POS); isRaised = true; retract(); }
 
     public void lower(){ arm.setPosition(Const.BARREL_BOTTOM_POS); isRaised = false; }
 
-    public void extend(){ pusher.setPosition(Const.PUSHER_EXTEND_POS); isExtended = true; }
+    public void extend(){
+        if(isRaised){
+            pusher.setPosition(Const.PUSHER_EXTEND_POS);
+            isExtended = true;
+        }
+    }
 
     public void retract(){ pusher.setPosition(Const.PUSHER_RETRACT_POS); isExtended = false; }
 

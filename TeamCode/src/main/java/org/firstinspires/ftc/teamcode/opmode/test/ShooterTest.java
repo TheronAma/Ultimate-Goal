@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.opmode.OpModeBase;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
  * Diagnostic opmode in order to test functionality of shooter methods
  * Will run the flywheel slowly and measure velocity over time
  */
+//@Disabled
 @Config
 @TeleOp()
 public class ShooterTest extends OpModeBase {

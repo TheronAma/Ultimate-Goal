@@ -30,19 +30,24 @@ public class DriveConstants {
     //12V 65.58 in/s <-- guess
 
     //This stuff is at 13.4V
-    public static double START_KV = 0.0135;
-    public static double START_KA = 0.0015;
-    public static double START_KS = 0.015;
-
+    public static double kV = 0.0135;
+    public static double kA = 0.002;
+    public static double kStatic = 0.03;
+/*
     public static double kV = 1/rpmToVelocity(MAX_RPM);
     public static double kA = 0;
     public static double kStatic = 0;
+    */
+
+    public static double new_kV = 0.0135;
+    public static double new_kA = 0.002;
+    public static double new_kStatic = 0.015;
 
 
 
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            55.0, 45.0, 0.0,
-            Math.toRadians(180.0), Math.toRadians(180.0), 0.0
+            72, 65, 0.0,
+            Math.toRadians(240), Math.toRadians(240), 0.0
     );
 
 

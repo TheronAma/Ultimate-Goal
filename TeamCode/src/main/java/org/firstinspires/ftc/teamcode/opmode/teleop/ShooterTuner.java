@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.opmode.OpModeConstants;
 import org.firstinspires.ftc.teamcode.subsystem.drivetrain.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystem.intake.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.shooter.Barrel;
@@ -14,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystem.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.wobblegoal.Wobble;
 
 @TeleOp()
-public class TestTeleOp extends LinearOpMode {
+public class ShooterTuner extends LinearOpMode {
 
     private enum State {
         MAIN_DRIVER_CONTROL,
@@ -36,10 +38,16 @@ public class TestTeleOp extends LinearOpMode {
     private boolean rbumber2Waspressed = false;
     private boolean x2WasPressed = false;
     private boolean y2WasPressed = false;
+    private boolean down2WasPressed = false;
+    private boolean up2WasPressed = false;
+    private boolean right2WasPressed = false;
+    private boolean left2WasPressed = false;
 
     private boolean shooterRunning = false;
-    private double shooterRpm = 4200;
-    private double shooterAngle = 22;
+    private double shooterMultiplier = 1;
+    private double shooterAngle = 23;
+
+    private double shooterRpm = 4000;
 
 
     public void runOpMode(){
@@ -51,6 +59,8 @@ public class TestTeleOp extends LinearOpMode {
 
         shooter.setAngle(23);
         state = State.MAIN_DRIVER_CONTROL;
+
+        barrel.retract();
 
         waitForStart();
 
@@ -79,10 +89,11 @@ public class TestTeleOp extends LinearOpMode {
 
             if(gamepad2.b && !b2WasPressed){
                 b2WasPressed = true;
-                barrel.togglePusher();
-            } else if(!gamepad2.b){
-                b2WasPressed = false;
+                barrel.extend();
+            } else if(!gamepad2.b && b2WasPressed){
+                barrel.retract();
             }
+            b2WasPressed = gamepad2.b;
 
             if(gamepad2.x && !x2WasPressed){
                 x2WasPressed = true;
@@ -107,26 +118,50 @@ public class TestTeleOp extends LinearOpMode {
                 rbumber2Waspressed = false;
             }
 
-            if(gamepad2.dpad_down){
-                shooterRpm = 3700;
-                shooterAngle = 0;
+            if(!up2WasPressed && gamepad2.dpad_up){
+                shooterAngle+=2;
                 shooter.setAngle(shooterAngle);
             }
 
-            if(gamepad2.dpad_up){
-                shooterRpm = 4100;
-                shooterAngle = 23;
+            if(!down2WasPressed && gamepad2.dpad_down){
+                shooterAngle -= 2;
                 shooter.setAngle(shooterAngle);
+            }
+
+            if(!right2WasPressed && gamepad2.dpad_right){
+                shooterRpm += 100;
+            }
+
+            if(!left2WasPressed && gamepad2.dpad_left){
+                shooterRpm -= 100;
             }
 
             if(shooterRunning){
                 shooter.setRpm(shooterRpm);
-                shooter.setAngle(shooterAngle);
             } else {
-                shooter.setRpm(0);
+                shooter.setPower(0);
             }
+
+            up2WasPressed = gamepad2.dpad_up;
+            down2WasPressed = gamepad2.dpad_down;
+            right2WasPressed = gamepad2.dpad_right;
+            left2WasPressed = gamepad2.dpad_left;
+
+            Vector2d difference = OpModeConstants.BLUE_HIGH_GOAL.minus(new Vector2d(
+                    drive.getPoseEstimate().getX(),
+                    drive.getPoseEstimate().getY()
+            ));
+
+            double distance = Math.sqrt(difference.getX() * difference.getX() + difference.getY() * difference.getY());
+
+            shooter.sendDashTelemetry();
+            telemetry.addData("Shooter Velo",shooterRpm);
+            telemetry.addData("Shooter Angle",shooterAngle);
+            telemetry.addData("Distance",distance);
+            telemetry.update();
 
             drive.update();
         }
     }
 }
+
